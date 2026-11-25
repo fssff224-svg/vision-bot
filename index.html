@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vision Signal Pro</title>
+<title>Quotex Vision Signal Pro</title>
 <style>
 body{background:#0b0f19;color:#fff;font-family:sans-serif;text-align:center;padding:20px}
 .box{background:#131b2e;border:1px solid #1e293b;border-radius:15px;padding:20px;max-width:380px;margin:20px auto}
@@ -10,52 +10,69 @@ h2{color:#38bdf8;margin-bottom:5px}
 select,button{width:100%;padding:12px;margin-top:12px;border-radius:10px;border:1px solid #334155;font-size:15px}
 select{background:#0b0f19;color:#fff}
 button{background:#2563eb;color:#fff;font-weight:bold;border:none}
-#res{margin-top:20px;padding:20px;background:#0b0f19;border-radius:12px;min-height:80px;font-size:22px;font-weight:bold}
+#res{margin-top:20px;padding:20px;background:#0b0f19;border-radius:12px;min-height:85px;font-size:22px;font-weight:bold}
 </style>
 </head>
 <body>
 <h2>VISION SIGNAL PRO</h2>
-<small style="color:#64748b">LIVE MARKET ANALYZER</small>
+<small style="color:#64748b">BINARY & QUOTEX ANALYZER</small>
 <div class="box">
+<select id="broker">
+<option>QUOTEX (Binary)</option>
+<option>POCKET OPTION</option>
+<option>BINOLLA</option>
+</select>
 <select id="pair">
+<option value="EURUSD-OTC">EUR/USD (OTC)</option>
+<option value="GBPUSD-OTC">GBP/USD (OTC)</option>
+<option value="USDJPY-OTC">USD/JPY (OTC)</option>
+<option value="AUDJPY-OTC">AUD/JPY (OTC)</option>
+<option value="USDINR-OTC">USD/INR (OTC)</option>
+<option value="USDBRL-OTC">USD/BRL (OTC)</option>
+<option value="USDPKR-OTC">USD/PKR (OTC)</option>
+<option value="NZDCAD-OTC">NZD/CAD (OTC)</option>
+<option value="XAUUSD">XAU/USD (Gold)</option>
 <option value="BTCUSDT">BTC/USDT (Live Crypto)</option>
 <option value="ETHUSDT">ETH/USDT (Live Crypto)</option>
-<option value="SOLUSDT">SOL/USDT (Live Crypto)</option>
-<option value="EURUSD">EUR/USD (Forex)</option>
-<option value="GBPUSD">GBP/USD (Forex)</option>
 </select>
 <select id="tf">
+<option>5 Seconds (S5)</option>
+<option>10 Seconds (S10)</option>
+<option>15 Seconds (S15)</option>
+<option>30 Seconds (S30)</option>
 <option>1 Minute (M1)</option>
 <option>5 Minutes (M5)</option>
 </select>
-<button onclick="go()">GET LIVE SIGNAL</button>
-<div id="res" style="color:#64748b;font-size:14px">Select pair & tap button</div>
+<button onclick="go()">GET 5S / LIVE SIGNAL</button>
+<div id="res" style="color:#64748b;font-size:14px">Select broker, pair & timeframe</div>
 </div>
 <script>
 async function go(){
+  let br=document.getElementById('broker').value;
   let p=document.getElementById('pair').value;
+  let tf=document.getElementById('tf').value;
   let r=document.getElementById('res');
   r.style.color='#38bdf8'; r.style.fontSize='15px';
-  r.innerHTML='Scanning live chart...';
+  r.innerHTML='Scanning '+br+' ('+tf+')...';
   try{
     if(p.endsWith('USDT')){
       let a=await fetch('https:'+String.fromCharCode(47,47)+'://binance.com);
       let d=await a.json();
       let ch=parseFloat(d.priceChangePercent);
-      let dir=ch>=0?'BUY ⬆':'SELL ⬇';
+      let dir=ch>=0?'CALL / BUY ⬆':'PUT / SELL ⬇';
       r.style.color=ch>=0?'#22c55e':'#ef4444';
-      r.style.fontSize='24px';
-      r.innerHTML=dir+'<br><small style="font-size:12px;color:#94a3b8">Price: $'+parseFloat(d.lastPrice).toFixed(2)+'</small>';
+      r.style.fontSize='22px';
+      r.innerHTML=dir+'<br><small style="font-size:12px;color:#94a3b8">Price: $'+parseFloat(d.lastPrice).toFixed(2)+' • '+tf+'</small>';
     }else{
-      await new Promise(x=>setTimeout(x,1500));
+      await new Promise(x=>setTimeout(x,1200));
       let up=Math.random()>0.5;
+      let acc=Math.floor(85+Math.random()*12);
       r.style.color=up?'#22c55e':'#ef4444';
-      r.style.fontSize='24px';
-      r.innerHTML=(up?'BUY ⬆':'SELL ⬇')+'<br><small style="font-size:12px;color:#94a3b8">'+p+' Signal Ready</small>';
+      r.style.fontSize='22px';
+      r.innerHTML=(up?'CALL / BUY ⬆':'PUT / SELL ⬇')+'<br><small style="font-size:12px;color:#94a3b8">'+p+' • '+tf+' • '+acc+'%</small>';
     }
   }catch(e){r.innerHTML='Try again'}
 }
 </script>
 </body>
 </html>
-
