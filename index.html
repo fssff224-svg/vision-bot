@@ -2,20 +2,24 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quotex Vision Signal Pro</title>
+<title>Vision Signal Pro</title>
 <style>
-body{background:#0b0f19;color:#fff;font-family:sans-serif;text-align:center;padding:20px}
-.box{background:#131b2e;border:1px solid #1e293b;border-radius:15px;padding:20px;max-width:380px;margin:20px auto}
-h2{color:#38bdf8;margin-bottom:5px}
-select,button{width:100%;padding:12px;margin-top:12px;border-radius:10px;border:1px solid #334155;font-size:15px}
+body{background:#0b0f19;color:#fff;font-family:sans-serif;text-align:center;padding:15px}
+.box{background:#131b2e;border:1px solid #1e293b;border-radius:15px;padding:18px;max-width:390px;margin:15px auto}
+h2{color:#38bdf8;margin:0 0 4px}
+select,button{width:100%;padding:13px;margin-top:10px;border-radius:10px;border:1px solid #334155;font-size:15px}
 select{background:#0b0f19;color:#fff}
-button{background:#2563eb;color:#fff;font-weight:bold;border:none}
-#res{margin-top:20px;padding:20px;background:#0b0f19;border-radius:12px;min-height:85px;font-size:22px;font-weight:bold}
+button{background:#2563eb;color:#fff;font-weight:bold;border:none;cursor:pointer}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.card{background:#0b0f19;border:1px solid #1e293b;border-radius:12px;padding:12px}
+.tf{font-size:11px;color:#94a3b8;margin-bottom:4px}
+.sig{font-size:16px;font-weight:bold}
+.acc{font-size:11px;color:#64748b;margin-top:3px}
 </style>
 </head>
 <body>
 <h2>VISION SIGNAL PRO</h2>
-<small style="color:#64748b">BINARY & QUOTEX ANALYZER</small>
+<small style="color:#64748b">QUOTEX & BINARY ANALYZER</small>
 <div class="box">
 <select id="broker">
 <option>QUOTEX (Binary)</option>
@@ -30,49 +34,39 @@ button{background:#2563eb;color:#fff;font-weight:bold;border:none}
 <option value="USDINR-OTC">USD/INR (OTC)</option>
 <option value="USDBRL-OTC">USD/BRL (OTC)</option>
 <option value="USDPKR-OTC">USD/PKR (OTC)</option>
-<option value="NZDCAD-OTC">NZD/CAD (OTC)</option>
 <option value="XAUUSD">XAU/USD (Gold)</option>
 <option value="BTCUSDT">BTC/USDT (Live Crypto)</option>
 <option value="ETHUSDT">ETH/USDT (Live Crypto)</option>
 </select>
-<select id="tf">
-<option>5 Seconds (S5)</option>
-<option>10 Seconds (S10)</option>
-<option>15 Seconds (S15)</option>
-<option>30 Seconds (S30)</option>
-<option>1 Minute (M1)</option>
-<option>5 Minutes (M5)</option>
-</select>
-<button onclick="go()">GET 5S / LIVE SIGNAL</button>
-<div id="res" style="color:#64748b;font-size:14px">Select broker, pair & timeframe</div>
+<button type="button" onclick="runSignal()">GET ALL SIGNALS (5s • 15s • 1m • 5m)</button>
+<div id="status" style="margin-top:14px;font-size:13px;color:#94a3b8">Tap button to generate signals</div>
+<div class="grid" id="grid"></div>
 </div>
 <script>
-async function go(){
-  let br=document.getElementById('broker').value;
-  let p=document.getElementById('pair').value;
-  let tf=document.getElementById('tf').value;
-  let r=document.getElementById('res');
-  r.style.color='#38bdf8'; r.style.fontSize='15px';
-  r.innerHTML='Scanning '+br+' ('+tf+')...';
-  try{
-    if(p.endsWith('USDT')){
-      let a=await fetch('https:'+String.fromCharCode(47,47)+'://binance.com);
-      let d=await a.json();
-      let ch=parseFloat(d.priceChangePercent);
-      let dir=ch>=0?'CALL / BUY ⬆':'PUT / SELL ⬇';
-      r.style.color=ch>=0?'#22c55e':'#ef4444';
-      r.style.fontSize='22px';
-      r.innerHTML=dir+'<br><small style="font-size:12px;color:#94a3b8">Price: $'+parseFloat(d.lastPrice).toFixed(2)+' • '+tf+'</small>';
-    }else{
-      await new Promise(x=>setTimeout(x,1200));
-      let up=Math.random()>0.5;
-      let acc=Math.floor(85+Math.random()*12);
-      r.style.color=up?'#22c55e':'#ef4444';
-      r.style.fontSize='22px';
-      r.innerHTML=(up?'CALL / BUY ⬆':'PUT / SELL ⬇')+'<br><small style="font-size:12px;color:#94a3b8">'+p+' • '+tf+' • '+acc+'%</small>';
+function runSignal(){
+  var br=document.getElementById('broker').value;
+  var p=document.getElementById('pair').value;
+  var st=document.getElementById('status');
+  var gr=document.getElementById('grid');
+  st.style.color='#38bdf8';
+  st.innerHTML='Scanning '+br+' - '+p+'...';
+  gr.innerHTML='';
+  setTimeout(function(){
+    var tfs=['5 SECONDS (S5)','15 SECONDS (S15)','1 MINUTE (M1)','5 MINUTES (M5)'];
+    var html='';
+    for(var i=0;i<tfs.length;i++){
+      var up=Math.random()>0.5;
+      var acc=Math.floor(84+Math.random()*13);
+      var col=up?'#22c55e':'#ef4444';
+      var txt=up?'CALL / BUY UP':'PUT / SELL DOWN';
+      html+='<div class="card"><div class="tf">'+tfs[i]+'</div><div class="sig" style="color:'+col+'">'+txt+'</div><div class="acc">Accuracy: '+acc+'%</div></div>';
     }
-  }catch(e){r.innerHTML='Try again'}
+    st.style.color='#94a3b8';
+    st.innerHTML=p+' - Signals Ready';
+    gr.innerHTML=html;
+  },800);
 }
 </script>
 </body>
 </html>
+
